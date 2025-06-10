@@ -1,0 +1,27 @@
+services:
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    ports:
+      - "6999:8080"
+    env_file:
+      - .env
+    volumes:
+      - .env:/app/.env
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 3s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - "7501:80"
+    depends_on:
+      - api
